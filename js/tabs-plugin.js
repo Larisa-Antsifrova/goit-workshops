@@ -1,9 +1,18 @@
 // Plugin version
 class Tabs {
-  constructor({ rootSelector }) {
+  constructor({
+    rootSelector,
+    activeControlClass = 'control-active',
+    activePaneClass = 'pane-active',
+    activeTab = 1,
+  }) {
     this._refs = this._getRefs(rootSelector);
+    this._activeControlClass = activeControlClass;
+    this._activePaneClass = activePaneClass;
+    this._activeTabIdx = activeTab - 1;
 
     this._bindEvents();
+    this._setActiveTab();
   }
   _getRefs(root) {
     const refs = {};
@@ -20,11 +29,73 @@ class Tabs {
   }
 
   _onControlsClick(event) {
-    console.log(this);
+    event.preventDefault();
+
+    if (event.target.nodeName !== 'A') {
+      return;
+    }
+
+    this._removeActiveTab();
+
+    const controlItem = event.target;
+    controlItem.classList.add(this._activeControlClass);
+
+    const paneId = this._getPaneId(controlItem);
+    this._setActivePane(paneId);
+  }
+
+  _getPaneId(control) {
+    return control.getAttribute('href').slice(1);
+  }
+
+  _getPaneById(id) {
+    return this._refs.panes.querySelector(`#${id}`);
+  }
+
+  _setActiveTab() {
+    const controlItems = this._refs.controls.querySelectorAll('a');
+    const control = controlItems[this._activeTabIdx];
+    const paneId = this._getPaneId(control);
+
+    control.classList.add(this._activeControlClass);
+    this._setActivePane(paneId);
+  }
+
+  _removeActiveTab() {
+    const currentActiveControlItem = this._refs.controls.querySelector(
+      `.${this._activeControlClass}`,
+    );
+
+    if (!currentActiveControlItem) {
+      return;
+    }
+
+    currentActiveControlItem.classList.remove(this._activeControlClass);
+    const paneId = this._getPaneId(currentActiveControlItem);
+    this._removeActivePane(paneId);
+  }
+
+  _setActivePane(id) {
+    const pane = this._getPaneById(id);
+    pane.classList.add(this._activePaneClass);
+  }
+
+  _removeActivePane(id) {
+    const pane = this._getPaneById(id);
+    pane.classList.remove(this._activePaneClass);
   }
 }
 
-const tabs1 = new Tabs({
+new Tabs({
   rootSelector: '#tabs-1',
+  activeControlClass: 'controls__item--active',
+  activePaneClass: 'pane--active',
+  activeTab: 1,
 });
-console.log(tabs1);
+
+new Tabs({
+  rootSelector: '#tabs-2',
+  activeControlClass: 'controls__item--active',
+  activePaneClass: 'pane--active',
+  activeTab: 1,
+});
