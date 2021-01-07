@@ -1,5 +1,5 @@
 // Plugin version
-class Tabs {
+export default class Tabs {
   constructor({
     rootSelector,
     activeControlClass = 'control-active',
@@ -85,17 +85,3 @@ class Tabs {
     pane.classList.remove(this._activePaneClass);
   }
 }
-
-new Tabs({
-  rootSelector: '#tabs-1',
-  activeControlClass: 'controls__item--active',
-  activePaneClass: 'pane--active',
-  activeTab: 1,
-});
-
-new Tabs({
-  rootSelector: '#tabs-2',
-  activeControlClass: 'controls__item--active',
-  activePaneClass: 'pane--active',
-  activeTab: 1,
-});
